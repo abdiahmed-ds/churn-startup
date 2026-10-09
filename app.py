@@ -2,6 +2,9 @@ import streamlit as st
 import requests
 import pandas as pd
 
+# Set your live Render backend URL here
+API_URL = "https://churnguard-api.onrender.com"  # Replace with your actual Render URL if it differs
+
 st.set_page_config(page_title="ChurnGuard Pro - Customer Churn Prediction", layout="wide")
 
 st.title("🛡️ ChurnGuard Pro")
@@ -24,8 +27,8 @@ if uploaded_file is not None:
         
         with st.spinner("Analyzing customer behavior patterns..."):
             try:
-                # Send file to your FastAPI backend running locally
-                response = requests.post("http://127.0.0.1:8000/predict", files=files)
+                # Send file to your live FastAPI backend on Render
+                response = requests.post(f"{API_URL}/predict", files=files)
                 
                 if response.status_code == 200:
                     result_data = response.json()
@@ -57,6 +60,6 @@ if uploaded_file is not None:
                 else:
                     st.error(f"API Error: {response.json().get('detail', 'Unknown error')}")
             except requests.exceptions.ConnectionError:
-                st.error("Could not connect to the backend API. Make sure your FastAPI server is running (`python -m uvicorn main:app --reload`).")
+                st.error("Could not connect to the backend API. Check if your Render service is live and accessible.")
 else:
     st.info("👈 Please upload a customer CSV file via the sidebar to begin.")
